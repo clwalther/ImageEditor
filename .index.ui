@@ -85,14 +85,14 @@
         <item>
          <widget class="QPushButton" name="button_drehen_links">
           <property name="text">
-           <string>Links</string>
+           <string>Counter Clockwise</string>
           </property>
          </widget>
         </item>
         <item>
          <widget class="QPushButton" name="button_drehen_rechts">
           <property name="text">
-           <string>Rechts</string>
+           <string>Clockwise</string>
           </property>
          </widget>
         </item>
@@ -216,7 +216,7 @@
      </layout>
     </item>
     <item>
-     <widget class="QWidget" name="leinwand" native="true">
+     <widget class="QWidget" name="canvas" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>4</horstretch>
@@ -262,7 +262,7 @@
   <connection>
    <sender>button_aktualisieren</sender>
    <signal>clicked()</signal>
-   <receiver>leinwand</receiver>
+   <receiver>canvas</receiver>
    <slot>repaint()</slot>
    <hints>
     <hint type="sourcelabel">
