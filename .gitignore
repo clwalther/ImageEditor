@@ -1,0 +1,5 @@
+__env__
+__pycache__
+__unittest__
+
+.env
