@@ -45,14 +45,14 @@
       <item row="0" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_5">
         <item>
-         <widget class="QPushButton" name="button_oeffnen">
+         <widget class="QPushButton" name="btn_open">
           <property name="text">
            <string>Öffnen</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="button_speichern">
+         <widget class="QPushButton" name="btn_save">
           <property name="text">
            <string>Speichern</string>
           </property>
@@ -83,16 +83,16 @@
       <item row="2" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_6">
         <item>
-         <widget class="QPushButton" name="button_drehen_links">
+         <widget class="QPushButton" name="btn_cclk">
           <property name="text">
-           <string>Counter Clockwise</string>
+           <string>Gegen den Uhrzeigersinn</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="button_drehen_rechts">
+         <widget class="QPushButton" name="btn_iclk">
           <property name="text">
-           <string>Clockwise</string>
+           <string>Im Uhrzeigersinn</string>
           </property>
          </widget>
         </item>
@@ -108,14 +108,14 @@
       <item row="3" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_7">
         <item>
-         <widget class="QPushButton" name="button_spiegeln_horizontal">
+         <widget class="QPushButton" name="btn_mhzt">
           <property name="text">
            <string>Horizontal</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="button_spiegeln_vertikal">
+         <widget class="QPushButton" name="btn_mvrt">
           <property name="text">
            <string>Vertikal</string>
           </property>
@@ -166,14 +166,14 @@
       <item row="5" column="1">
        <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QPushButton" name="button_invertieren">
+         <widget class="QPushButton" name="btn_invt">
           <property name="text">
            <string>Invertieren</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="button_graustufen">
+         <widget class="QPushButton" name="btn_gray">
           <property name="text">
            <string>Graustufen</string>
           </property>
@@ -189,7 +189,7 @@
        </widget>
       </item>
       <item row="6" column="1">
-       <widget class="QSlider" name="slider_helligkeit">
+       <widget class="QSlider" name="sld_brgh">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
           <horstretch>0</horstretch>
