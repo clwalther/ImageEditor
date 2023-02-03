@@ -37,6 +37,7 @@ class PNGImage():
                 return 0
         return -1
 
+    # ~ @clwalther
     def getPixel(self, x: int, y: int) -> list:
         """Retrieve the RGB value of a given pixel in the image.
 
@@ -71,7 +72,6 @@ class PNGImage():
         self.pixeldata[y * self.width + x] = list(map(int, value))
         return 0
 
-    # ~ @clwalther
     def rotate(self, turnIndex: int) -> int:
         """Rotate the image by 90°, 180°, or 270° clockwise.
 
@@ -100,9 +100,9 @@ class PNGImage():
                 stop  = imageWidth * (y + 1)
                 flatList.append(self.pixeldata[start:stop])
 
-            for x in range(imageHeight):
-                for y in range(imageWidth):
-                    self.setPixel(imageHeight - x - 1, y, flatList[x][y])
+            for y in range(imageHeight):
+                for x in range(imageWidth):
+                    self.setPixel(imageHeight - y - 1, x, flatList[y][x])
 
         return 0
 
@@ -175,8 +175,8 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
 
             pixelSize    = int(min(pixelWidth, pixelHeight))
 
-            drawRootX = (canvasWidth  - (self.image.width  * pixelSize)) / 2
-            drawRootY = (canvasHeight - (self.image.height * pixelSize)) / 2
+            paddingX = (canvasWidth  - (self.image.width  * pixelSize)) / 2
+            paddingY = (canvasHeight - (self.image.height * pixelSize)) / 2
 
             draw = QtGui.QPainter(self.canvas)
             draw.setPen(QtCore.Qt.NoPen)
@@ -184,8 +184,8 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
             for y in range(self.image.height):
                 for x in range(self.image.width):
                     pixel = self.image.getPixel(x, y)
-                    drawX = int(drawRootX + pixelSize * x)
-                    drawY = int(drawRootY + pixelSize * y)
+                    drawX = int(paddingX + pixelSize * x)
+                    drawY = int(paddingY + pixelSize * y)
 
                     draw.setBrush(QtGui.QColor(pixel[0], pixel[1], pixel[2]))
                     draw.drawRect(drawX, drawY, pixelSize, pixelSize)
