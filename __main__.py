@@ -27,8 +27,7 @@ class PNGImage():
     def save(self, name: str) -> int:
         """Writes the data into a file and saves it.
 
-            Returns: 0 if saving was successful.
-        """
+            Returns: 0 if saving was successful."""
         if self.pixeldata and self.height and self.width:
             flatList = []
             for pixel in self.pixeldata:
@@ -39,11 +38,34 @@ class PNGImage():
         return -1
 
     def getPixel(self, x: int, y: int) -> list:
-        """Returns the pixel value of a given pixel-x-y."""
+        """Retrieve the RGB value of a given pixel in the image.
+
+            Parameters:
+                x (int): The x-coordinate of the pixel.
+                y (int): The y-coordinate of the pixel.
+
+            Returns:
+                list: A list of 3 integers representing the red, green, and blue values of the pixel.
+
+            Raises:
+                IndexError: If the x and y values are outside the bounds of the image.
+            """
         return self.pixeldata[y * self.width + x]
 
     def setPixel(self, x: int, y: int, value: list) -> int:
-        """Sets the pixel identified by x-y to given color value."""
+        """Set the color value of a given pixel.
+
+            Parameters:
+                x (int): The x-coordinate of the pixel.
+                y (int): The y-coordinate of the pixel.
+                value (list): The color value of the pixel in the format [R, G, B], where R, G, and B are integers between 0 and 255.
+
+            Returns:
+                int: 0 if the operation is successful.
+
+            Raises:
+                ValueError: If the length of `value` is not 3 or if R, G, B are not integers between 0 and 255.
+            """
         if not len(value) == 3 and 0 <= value[0] == value[1] == value[2] <= 255:
             raise ValueError
         self.pixeldata[y * self.width + x] = list(map(int, value))
@@ -60,8 +82,7 @@ class PNGImage():
                 int: 0 if the rotation was successful, raises ValueError if the turnIndex is not in the range [1, 3].
 
             Raises:
-                ValueError: If the turnIndex is not in the range [1, 3].
-            """
+                ValueError: If the turnIndex is not in the range [1, 3]."""
         if not 1 <= turnIndex <= 3:
             raise ValueError
 
@@ -93,7 +114,7 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
         self.canvas.paintEvent = self.draw
         self.image = None
 
-        ## connect buttons to methods
+        ## connect actions to methods
         self.btn_open.clicked.connect(self.openFile)
         self.btn_save.clicked.connect(self.saveFile)
         self.btn_cclk.clicked.connect(self.rotateClkWise)
