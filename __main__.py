@@ -174,15 +174,15 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
                 event (QtCore.QEvent): Determins the redrawing of the canvas.
             """
         if self.image:
-            canvasWidth  = self.canvas.width()
-            canvasHeight = self.canvas.height()
-            pixelWidth   = canvasWidth  / self.image.width
-            pixelHeight  = canvasHeight / self.image.height
+            canvas_width  = self.canvas.width()
+            canvas_height = self.canvas.height()
+            pixel_width   = canvas_width  / self.image.width
+            pixel_height  = canvas_height / self.image.height
 
-            pixelSize    = int(min(pixelWidth, pixelHeight))
+            pixel_size  = int(min(pixel_width, pixel_height))
 
-            paddingX = (canvasWidth  - (self.image.width  * pixelSize)) / 2
-            paddingY = (canvasHeight - (self.image.height * pixelSize)) / 2
+            padding_x =(canvas_width  - (self.image.width  * pixel_size)) / 2
+            padding_y = (canvas_height - (self.image.height * pixel_size)) / 2
 
             draw = QtGui.QPainter(self.canvas)
             draw.setPen(QtCore.Qt.NoPen)
@@ -190,11 +190,11 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
             for y in range(self.image.height):
                 for x in range(self.image.width):
                     pixel = self.image.get_pixel(x, y)
-                    drawX = int(paddingX + pixelSize * x)
-                    drawY = int(paddingY + pixelSize * y)
+                    draw_x = int(padding_x + pixel_size * x)
+                    draw_y = int(padding_y + pixel_size * y)
 
                     draw.setBrush(QtGui.QColor(pixel[0], pixel[1], pixel[2]))
-                    draw.drawRect(drawX, drawY, pixelSize, pixelSize)
+                    draw.drawRect(draw_x, draw_y, pixel_size, pixel_size)
             draw.end()
 
     def rotate_clockwise(self) -> int:
