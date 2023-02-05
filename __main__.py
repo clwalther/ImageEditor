@@ -1,47 +1,51 @@
 from PyQt5 import uic, QtGui, QtCore, QtWidgets
 import sys
+import numpy as np
 
-class PNGImage():
+class PNGImage:
     def __init__(self):
         self.pixeldata = None
-        self.height    = None
-        self.width     = None
+        self.height = None
+        self.width = None
 
     def load(self, name: str) -> int:
         """Loads data from file into list format.
 
-            Returns: 0 if image was successfully loaded.
+            Returns:
+                int: 0 if image was successfully loaded, -1 otherwise.
             """
         img = QtGui.QImage()
         if img.load(name):
             img = img.convertToFormat(QtGui.QImage.Format_RGB888)
             self.height = img.height()
             self.width = img.width()
-            bareData = list(img.scanLine(0).asarray(img.sizeInBytes()))
+            bare_data = list(img.scanLine(0).asarray(img.sizeInBytes()))
             self.pixeldata = []
-            for i in range(0, len(bareData), 3):
-                self.pixeldata.append(bareData[i:i+3])
+            for i in range(0, len(bare_data), 3):
+                self.pixeldata.append(bare_data[i:i+3])
             return 0
         return -1
 
     def save(self, name: str) -> int:
         """Writes the data into a file and saves it.
 
-            Returns: 0 if saving was successful."""
+            Returns:
+                int: 0 if saving was successful, -1 otherwise.
+            """
         if self.pixeldata and self.height and self.width:
-            flatList = []
+            flat_list = []
             for pixel in self.pixeldata:
-                flatList += pixel
-            img = QtGui.QImage(bytes(flatList), self.width, self.height, self.width*3, QtGui.QImage.Format_RGB888)
+                flat_list += pixel
+            img = QtGui.QImage(bytes(flat_list), self.width, self.height, self.width*3, QtGui.QImage.Format_RGB888)
             if img.save(name):
                 return 0
         return -1
 
     # ~ @clwalther
-    def getPixel(self, x: int, y: int) -> list:
+    def get_pixel(self, x: int, y: int) -> list:
         """Retrieve the RGB value of a given pixel in the image.
 
-            Parameters:
+            Args:
                 x (int): The x-coordinate of the pixel.
                 y (int): The y-coordinate of the pixel.
 
@@ -53,10 +57,10 @@ class PNGImage():
             """
         return self.pixeldata[y * self.width + x]
 
-    def setPixel(self, x: int, y: int, value: list) -> int:
+    def set_pixel(self, x: int, y: int, value: list) -> int:
         """Set the color value of a given pixel.
 
-            Parameters:
+            Args:
                 x (int): The x-coordinate of the pixel.
                 y (int): The y-coordinate of the pixel.
                 value (list): The color value of the pixel in the format [R, G, B], where R, G, and B are integers between 0 and 255.
@@ -67,43 +71,45 @@ class PNGImage():
             Raises:
                 ValueError: If the length of `value` is not 3 or if R, G, B are not integers between 0 and 255.
             """
-        if not len(value) == 3 and 0 <= value[0] == value[1] == value[2] <= 255:
+        if not (len(value) == 3 and all(0 <= v <= 255 for v in value)):
             raise ValueError
         self.pixeldata[y * self.width + x] = list(map(int, value))
-        return 0
 
-    def rotate(self, turnIndex: int) -> int:
+    def rotate(self, turn_index: int) -> int:
         """Rotate the image by 90°, 180°, or 270° clockwise.
 
             Args:
-                turnIndex (int): The number of turns to rotate the image (1, 2, or 3).
+                turn_index (int): The number of turns to rotate the image (1, 2, or 3).
 
             Returns:
-                int: 0 if the rotation was successful, raises ValueError if the turnIndex is not in the range [1, 3].
+                int: 0 if the rotation was successful, raises ValueError if the turn_index is not in the range [1, 3].
 
             Raises:
-                ValueError: If the turnIndex is not in the range [1, 3]."""
-        if not 1 <= turnIndex <= 3:
+                ValueError: If the turn_index is not in the range [1, 3]."""
+        if not 1 <= turn_index <= 3:
             raise ValueError
 
-        for _ in range(turnIndex):
-            flatList = []
+        for _ in range(turn_index):
+            flat_list = []
 
-            imageHeight = self.height
-            imageWidth  = self.width
+            image_height = self.height
+            image_width  = self.width
 
-            self.height = imageWidth
-            self.width  = imageHeight
+            self.height = image_width
+            self.width  = image_height
 
-            for y in range(imageHeight):
-                start = imageWidth * (y + 0)
-                stop  = imageWidth * (y + 1)
-                flatList.append(self.pixeldata[start:stop])
+            for y in range(image_height):
+                start = image_width * (y + 0)
+                stop  = image_width * (y + 1)
+                flat_list.append(self.pixeldata[start:stop])
 
-            for y in range(imageHeight):
-                for x in range(imageWidth):
-                    self.setPixel(imageHeight - y - 1, x, flatList[y][x])
+            for y in range(image_height):
+                for x in range(image_width):
+                    self.set_pixel(image_height - y - 1, x, flat_list[y][x])
 
+        return 0
+
+    def blur(self) -> int:
         return 0
 
 
@@ -115,17 +121,17 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
         self.image = None
 
         ## connect actions to methods
-        self.btn_open.clicked.connect(self.openFile)
-        self.btn_save.clicked.connect(self.saveFile)
-        self.btn_cclk.clicked.connect(self.rotateClkWise)
-        self.btn_iclk.clicked.connect(self.rotateCrClkWise)
+        self.btn_open.clicked.connect(self.open_file)
+        self.btn_save.clicked.connect(self.save_file)
+        self.btn_cclk.clicked.connect(self.rotate_clockwise)
+        self.btn_iclk.clicked.connect(self.rotate_counter_clockwise)
         # self.btn_mhzt.clicked.connect(...)
         # self.btn_mvrt.clicked.connect(...)
         # self.btn_gray.clicked.connect(...)
         # self.btn_invt.clicked.connect(...)
         # self.sld_brgh.valueChanged.connect(...)
 
-    def openFile(self) -> int:
+    def open_file(self) -> int:
         """Opens file explorer instance and loads a chosen PNG File into the 'PNGImage' class.
 
             Returns:
@@ -141,7 +147,7 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
             return loaded
         return -1
 
-    def saveFile(self) -> int:
+    def save_file(self) -> int:
         """Opens file explorer insance and saves a the current image into a PNG File.
 
             Returns:
@@ -183,7 +189,7 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
 
             for y in range(self.image.height):
                 for x in range(self.image.width):
-                    pixel = self.image.getPixel(x, y)
+                    pixel = self.image.get_pixel(x, y)
                     drawX = int(paddingX + pixelSize * x)
                     drawY = int(paddingY + pixelSize * y)
 
@@ -191,7 +197,7 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
                     draw.drawRect(drawX, drawY, pixelSize, pixelSize)
             draw.end()
 
-    def rotateClkWise(self) -> int:
+    def rotate_clockwise(self) -> int:
         """Rotate the image clockwise by 90°.
 
             Returns:
@@ -203,7 +209,7 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
             return rotated
         return -1
 
-    def rotateCrClkWise(self) -> int:
+    def rotate_counter_clockwise(self) -> int:
         """Rotate the image counter-clockwise by 90°.
 
             Returns:
