@@ -111,7 +111,13 @@ class PNGImage:
 
     def blur(self) -> int:
         return 0
-
+    
+    
+    def horizontalSpiegeln(self):
+        image_width = self.width
+        image_height = self.height
+        daten = self.pixeldata
+        for x in 
 
 class ImageEditorApplication(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
