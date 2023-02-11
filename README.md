@@ -1,40 +1,46 @@
 # ImageEditor
-Python-Qt based image-editor project for CS-class.
 
-## Introduction
-This is the documentation for the CS-class project `Bilddateien`.<br>
-The following will be true in `python version 3.10.7` with `PyQt5` last stable relase. To fully understand the code we recommend to go read the ***__doc-strings__***.
+Python-Qt basiertes Bildbearbeitungsprojekt für den Informatik-Kurs.
 
-## Table of Contents
+## Einführung
+
+Dies ist die Dokumentation für das Informatik-Kursprojekt Bilddateien. <br>
+Das Folgende gilt für `python version 3.10.7` mit dem letzten stabilen Release von `PyQt5`. Um den Code vollständig zu verstehen, empfehlen wir, die ***Doc-Strings*** zu lesen.
+
+## Inhaltsverzeichnis
+
 - @clwalther
-    - `PNGImage`.get_pixel()
-    - `PNGImage`.set_pixel()
-    - `PNGImage`.rotate()
-    - `ImageEditorApplication`.draw()
+    - PNGImage.get_pixel()
+    - PNGImage.set_pixel()
+    - PNGImage.rotate()
+    - ImageEditorApplication.draw()
 
-
-## Documentation
-
+## Dokumentation
 ### `PNGImage`.get_pixel (@clwalther)
-The `get_pixel` method retrieves the RGB value of a pixel in the image. It takes two arguments, `x` and `y`, which represent the x and y coordinates of the pixel, respectively. It returns a list of three integers that represent the red, green, and blue values of the pixel. If the x and y values are outside the bounds of the image, the method raises an `IndexError`.
+
+Die Methode `get_pixel` liefert die RGB-Werte eines Pixels in dem Bild. Es nimmt zwei Argumente entgegen, `x` und `y`, die die x- und y-Koordinaten des Pixels darstellen. Es gibt eine Liste von drei Integern zurück, die die Rot-, Grün- und Blauwerte des Pixels darstellen. Wenn die x- und y-Werte außerhalb des Bildbereichs liegen, wird ein `IndexError` ausgelöst.
 
 ---
 
 ### `PNGImage`.set_pixel (@clwlather)
-The `set_pixel` method sets the color value of a given pixel. It takes three arguments: `x`, `y`, and `value`. `x` and `y` represent the x and y coordinates of the pixel, respectively, and value is the color value of the pixel in the format [R, G, B], where R, G, and B are integers between 0 and 255. The method returns 0 if the operation is successful. If the length of value is not 3 or if R, G, B are not integers between 0 and 255, the method raises a `ValueError`.
+
+Die Methode `set_pixel` legt die Farbwerte eines bestimmten Pixels fest. Es nimmt drei Argumente entgegen: `x`, `y` und `value`. `x` und `y` stellen die x- und y-Koordinaten des Pixels dar, während `value` die Farbwerte des Pixels im Format [R, G, B] ist, wobei R, G und B Integern zwischen 0 und 255 sind. Die Methode gibt 0 zurück, wenn der Vorgang erfolgreich war. Wenn die Länge von value nicht 3 ist oder wenn R, G, B keine Integern zwischen 0 und 255 sind, wird ein `ValueError` ausgelöst.
 
 ---
 
-### `PNGImage`.rotate (@clwalther)
-The `rotate` method rotates the image by 90°, 180°, or 270° clockwise. It takes one argument, `turn_index`, which represents the number of turns to rotate the image. turn_index must be either 1, 2, or 3. The method returns 0 if the rotation was successful. If the `turn_index` is not in the range [1, 3], the method raises a `ValueError`.
+### PNGImage.rotate (@clwalther)
+
+Die Methode rotate dreht das Bild um 90°, 180° oder 270° im Uhrzeigersinn. Es nimmt ein Argument `turn_index`, das die Anzahl der Drehungen des Bildes darstellt. `turn_index` muss entweder 1, 2 oder 3 sein. Die Methode gibt 0 zurück, wenn die Rotation erfolgreich war. Wenn der `turn_index` nicht im Bereich [1, 3] liegt, wird ein `ValueError` ausgelöst.
+
 
 ---
 
-### `ImageEditorApplication`.draw (@clwalther)
-In the class `ImageEditorApplication` the method `draw` takes one argument: `event`: `QtCore.QEvent`. This method is called when updates are beeing called and the application wants to rerender parts of the application to the screen. If this is the case, the following procedure will unfold:
+ImageEditorApplication.draw (@clwalther)
 
-1. The size of the pixels is determined by choosing the smallest of the `pixel_width` and `pixel_height`.
-2. To center the necessary offsets are beeing calculated and saved in `padding_x` and `padding_y`.
-3. The image is beeing iterated over for `x` and `y` and the pixel RGB is than beeing drawn as a rectangle to the canvas.
+In der Klasse ImageEditorApplication nimmt die Methode `draw` ein Argument: `event`: `QtCore.QEvent`. Diese Methode wird aufgerufen, wenn Updates aufgerufen werden und die Anwendung Teile der Anwendung erneut auf den Bildschirm rendern möchte. Falls dies der Fall ist, wird folgendes Verfahren durchgeführt:
+
+    1. Die Größe der Pixel wird bestimmt, indem das Kleinere von `pixel_width` und `pixel_height` gewählt wird.
+    2. Um die Mitte auszurichten, werden die erforderlichen Offsets berechnet und in `padding_x` und `padding_y` gespeichert.
+    3. Das Bild wird über `x` und `y` iteriert und das RGB-Pixel wird als Rechteck auf die Leinwand gezeichnet.
 
 ---

@@ -1,12 +1,11 @@
 from PyQt5 import uic, QtGui, QtCore, QtWidgets
 import sys
-import numpy as np
 
 class PNGImage:
     def __init__(self):
-        self.pixeldata = None
-        self.height = None
-        self.width = None
+        self.pixeldata    = None
+        self.height       = None
+        self.width        = None
 
     def load(self, name: str) -> int:
         """Loads data from file into list format.
@@ -109,8 +108,27 @@ class PNGImage:
 
         return 0
 
-    def blur(self) -> int:
-        return 0
+    # ~ @mateo
+    def greyscale(self) -> int:
+        for y in range(self.height):
+            for x in range(self.width):
+                pixel = self.get_pixel(x, y)
+                self.set_pixel(x, y, [int(0.299 * pixel[0] + 0.587 * pixel[1] + 0.114 * pixel[2])] * 3)
+
+    def invert(self) -> int:
+        for y in range(self.height):
+            for x in range(self.width):
+                pixel = self.get_pixel(x, y)
+                self.set_pixel(x, y, [255 - pixel[0], 255 - pixel[1], 255 - pixel[2]])
+
+    def brightness(self, value: float) -> int:
+        for y in range(self.height):
+            for x in range(self.width):
+                pixel = self.get_pixel(x, y)
+                r_wert = min(255, pixel[0]*(1 + value))
+                g_wert = min(255, pixel[1]*(1 + value))
+                b_wert = min(255, pixel[2]*(1 + value))
+                self.set_pixel(x, y, [r_wert, g_wert, b_wert])
 
 
 class ImageEditorApplication(QtWidgets.QMainWindow):
@@ -120,16 +138,17 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
         self.canvas.paintEvent = self.draw
         self.image = None
 
-        ## connect actions to methods
+        # connect actions to methods
         self.btn_open.clicked.connect(self.open_file)
         self.btn_save.clicked.connect(self.save_file)
         self.btn_cclk.clicked.connect(self.rotate_clockwise)
         self.btn_iclk.clicked.connect(self.rotate_counter_clockwise)
         # self.btn_mhzt.clicked.connect(...)
         # self.btn_mvrt.clicked.connect(...)
-        # self.btn_gray.clicked.connect(...)
-        # self.btn_invt.clicked.connect(...)
-        # self.sld_brgh.valueChanged.connect(...)
+        self.btn_grey.clicked.connect(self.greyscale)
+        self.btn_invt.clicked.connect(self.invert)
+        # self.btn_blur.clicked.connect(...)
+        self.sld_brgh.valueChanged.connect(self.changed_brightness)
 
     def open_file(self) -> int:
         """Opens file explorer instance and loads a chosen PNG File into the 'PNGImage' class.
@@ -143,7 +162,6 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
         if name:
             self.image = PNGImage()
             loaded = self.image.load(name)
-            self.update()
             return loaded
         return -1
 
@@ -220,6 +238,24 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
             self.update()
             return rotated
         return -1
+
+    # ~ @mateo
+    def greyscale(self) -> int:
+        if self.image:
+            self.image.greyscale()
+            self.update()
+
+    def invert(self) -> int:
+        if self.image:
+            self.image.invert()
+            self.update()
+
+    def changed_brightness(self, value: int) -> int:
+        if self.image:
+            value = value / 100
+
+            self.image.brightness(value)
+            self.update()
 
 
 def main():

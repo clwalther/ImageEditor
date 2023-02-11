@@ -173,7 +173,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="btn_gray">
+         <widget class="QPushButton" name="btn_grey">
           <property name="text">
            <string>Graustufen</string>
           </property>
