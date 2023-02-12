@@ -1,11 +1,12 @@
 from PyQt5 import uic, QtGui, QtCore, QtWidgets
 import sys
+import math
 
 class PNGImage:
     def __init__(self):
-        self.pixeldata    = None
-        self.height       = None
-        self.width        = None
+        self.pixeldata = None
+        self.height    = None
+        self.width     = None
 
     def load(self, name: str) -> int:
         """Loads data from file into list format.
@@ -89,7 +90,7 @@ class PNGImage:
             raise ValueError
 
         for _ in range(turn_index):
-            flat_list = []
+            flat_list = [[self.get_pixel(x, y) for x in range(self.width)] for y in range(self.height)]
 
             image_height = self.height
             image_width  = self.width
@@ -98,30 +99,95 @@ class PNGImage:
             self.width  = image_height
 
             for y in range(image_height):
-                start = image_width * (y + 0)
-                stop  = image_width * (y + 1)
-                flat_list.append(self.pixeldata[start:stop])
-
-            for y in range(image_height):
                 for x in range(image_width):
                     self.set_pixel(image_height - y - 1, x, flat_list[y][x])
 
         return 0
 
+    def convolve(self, image: list, sieve: list) -> list:
+        """This function performs the convolution operation between an image and a sieve.
+
+            Args:
+                image (list): A 2D list representing the image to be convolved. Each element of the list should be a list containing the pixel values of a row in the image.
+                sieve (list): A 2D list representing the sieve to be used for the convolution. Each element of the list should be a list containing the sieve coefficients for a row in the sieve.
+
+            Returns:
+                list: A 2D list representing the convolved image. Each element of the list should be a list containing the convolved pixel values for a row in the image.
+            """
+        image_height, image_width = len(image), len(image[0])
+        sieve_height, sieve_width = len(sieve), len(sieve[0])
+
+        output_image = [[[0, 0, 0] for x in range(image_width)] for y in range(image_height)]
+
+
+        if sieve_height % 2 == 1 and sieve_width % 2 == 1:
+            # loop over image
+            for y in range(image_height):
+                for x in range(image_width):
+                    # loop over sieve
+                    for k in range(int(-(sieve_height - 1) / 2), int(+(sieve_height - 1) / 2) + 1, 1):
+                        for l in range(int(-(sieve_width - 1) / 2), int(+(sieve_width - 1) / 2) + 1, 1):
+
+                            if 0 <= (y + k) < image_height and 0 <= (x + l) < image_width: # filters impossible indexs
+                                for channelIndex in range(3):
+                                    output_image[y][x][channelIndex] += int(image[y + k][x + l][channelIndex] * sieve[k][l][channelIndex])
+
+                                    if output_image[y][x][channelIndex] > 255: # filters impossible values
+                                        output_image[y][x][channelIndex] = 255
+        else:
+            raise IndexError
+
+        return output_image
+
+    def blur(self) -> int:
+        BLURRING_CONSTANT = 5
+
+        image = [[self.get_pixel(x, y) for x in range(self.width)] for y in range(self.height)] # 1D list -> 2D list
+        sieve = lambda size: [[[1/(size**2)]*3 for x in range(size)] for y in range(size)] # creats the sieve with a height of size and width of size
+
+        convolved_image = self.convolve(image, sieve(BLURRING_CONSTANT))
+
+        for x in range(self.width):
+            for y in range(self.height):
+                self.set_pixel(x, y, convolved_image[y][x])
+
+        return 0
+
+    def edge_enhancement(self):
+        image = [[self.get_pixel(x, y) for x in range(self.width)] for y in range(self.height)] # 1D list -> 2D list
+        sieve_0 = [[[-1/4]*3, [   0]*3, [+1/4]*3],
+                   [[-1/2]*3, [   0]*3, [+1/2]*3],
+                   [[-1/4]*3, [   0]*3, [+1/4]*3]]
+        sieve_1 = [[[-1/4]*3, [-1/2]*3, [-1/4]*3],
+                   [[   0]*3, [   0]*3, [   0]*3],
+                   [[+1/4]*3, [+1/2]*3, [+1/4]*3]]
+
+        convolved_image_0 = self.convolve(image, sieve_0)
+        convolved_image_1 = self.convolve(image, sieve_1)
+        # convolved_image =
+
+        print(convolved_image)
+
+        # for x in range(self.width):
+        #     for y in range(self.height):
+        #         self.set_pixel(x, y, convolved_image[y][x])
+
+        return 0
+
     # ~ @mateo
-    def greyscale(self) -> int:
+    def greyscale(self):
         for y in range(self.height):
             for x in range(self.width):
                 pixel = self.get_pixel(x, y)
                 self.set_pixel(x, y, [int(0.299 * pixel[0] + 0.587 * pixel[1] + 0.114 * pixel[2])] * 3)
 
-    def invert(self) -> int:
+    def invert(self):
         for y in range(self.height):
             for x in range(self.width):
                 pixel = self.get_pixel(x, y)
                 self.set_pixel(x, y, [255 - pixel[0], 255 - pixel[1], 255 - pixel[2]])
 
-    def brightness(self, value: float) -> int:
+    def brightness(self, value):
         for y in range(self.height):
             for x in range(self.width):
                 pixel = self.get_pixel(x, y)
@@ -130,6 +196,20 @@ class PNGImage:
                 b_wert = min(255, pixel[2]*(1 + value))
                 self.set_pixel(x, y, [r_wert, g_wert, b_wert])
 
+    # ~ @lars
+    def mirror_horizontal(self) -> int:
+        flat_list = [[self.get_pixel(x, y) for x in range(self.width)] for y in range(self.height)]
+
+        for x in range(self.width):
+            for y in range(self.height):
+                self.set_pixel(x, y, flat_list[self.height - y - 1][x])
+
+    def mirror_vertical(self) -> int:
+        flat_list = [[self.get_pixel(x, y) for y in range(self.height)] for x in range(self.width)]
+
+        for x in range(self.width):
+            for y in range(self.height):
+                self.set_pixel(x, y, flat_list[self.width - x - 1][y])
 
 class ImageEditorApplication(QtWidgets.QMainWindow):
     def __init__(self, parent=None):
@@ -143,11 +223,12 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
         self.btn_save.clicked.connect(self.save_file)
         self.btn_cclk.clicked.connect(self.rotate_clockwise)
         self.btn_iclk.clicked.connect(self.rotate_counter_clockwise)
-        # self.btn_mhzt.clicked.connect(...)
-        # self.btn_mvrt.clicked.connect(...)
+        self.btn_mhzt.clicked.connect(self.mirror_horizontal)
+        self.btn_mvrt.clicked.connect(self.mirror_vertical)
         self.btn_grey.clicked.connect(self.greyscale)
         self.btn_invt.clicked.connect(self.invert)
-        # self.btn_blur.clicked.connect(...)
+        self.btn_blur.clicked.connect(self.blur)
+        self.btn_edge.clicked.connect(self.edge_enhancing)
         self.sld_brgh.valueChanged.connect(self.changed_brightness)
 
     def open_file(self) -> int:
@@ -239,24 +320,50 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
             return rotated
         return -1
 
+    def blur(self) -> int:
+        """"""
+        if self.image:
+            blurred = self.image.blur()
+            self.update()
+            return blurred
+        return -1
+
+    def edge_enhancing(self) -> int:
+        """"""
+        if self.image:
+            edge_enhanced = self.image.edge_enhancement()
+            self.update()
+            return edge_enhanced
+        return -1
+
     # ~ @mateo
-    def greyscale(self) -> int:
+    def greyscale(self):
         if self.image:
             self.image.greyscale()
             self.update()
 
-    def invert(self) -> int:
+    def invert(self):
         if self.image:
             self.image.invert()
             self.update()
 
-    def changed_brightness(self, value: int) -> int:
+    def changed_brightness(self, value):
         if self.image:
             value = value / 100
 
             self.image.brightness(value)
             self.update()
 
+    # ~ @lars
+    def mirror_horizontal(self):
+        if self.image:
+            self.image.mirror_horizontal()
+            self.update()
+
+    def mirror_vertical(self):
+        if self.image:
+            self.image.mirror_vertical()
+            self.update()
 
 def main():
     app = QtWidgets.QApplication(sys.argv)

@@ -179,6 +179,20 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="btn_blur">
+          <property name="text">
+           <string>Blur</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="btn_edge">
+          <property name="text">
+           <string>Edges</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item row="6" column="0">
