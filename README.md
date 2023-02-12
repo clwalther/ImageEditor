@@ -17,6 +17,9 @@ Das Folgende gilt für `python version 3.10.7` mit dem letzten stabilen Release 
         - `PNGImage`.blur()
         - `PNGImage`.edge_detection()
         - `ImageEditorApplication`.draw()
+    - @lars
+        - `PNGImage`.mirror_horizontal()
+        - `PNGImage`.mirror_vertical()
 - Gemeinsamer Teil
     - Auflösung
     - Farbtiefe
@@ -59,6 +62,21 @@ Die Methode `edge_detection` führt eine Kantenerkennung auf dem Bild durch, ind
 
 ---
 
+
+### `PNGImage`.mirror_horizontal (@lars)
+Die Methode `mirror_horizontal` führt eine horizontale Spiegelung des Bilds durch, indem es die einzelnen Pixel um 1 über ihrem ursprünglichen `y`-Wert gespeichert. 
+
+
+---
+
+
+### `PNGImage`.mirror_vertical (@lars)
+Die Methode `mirror_vertical`führt eine vertikale Spiegelung des Bildes durch, indem es die `y`-Werte der einzelnen Pixel mit -1 multipliziert und so auf die andere Seite des Koordinatensystems transpoertiert.
+
+
+---
+
+
 ### `ImageEditorApplication`.draw (@clwalther)
 
 In der Klasse `ImageEditorApplication` nimmt die Methode `draw` ein Argument: `event`: `QtCore.QEvent`. Diese Methode wird aufgerufen, wenn Updates aufgerufen werden und die Anwendung Teile der Anwendung erneut auf den Bildschirm rendern möchte. Falls dies der Fall ist, wird folgendes Verfahren durchgeführt:
@@ -66,6 +84,9 @@ In der Klasse `ImageEditorApplication` nimmt die Methode `draw` ein Argument: `e
     1. Die Größe der Pixel wird bestimmt, indem das Kleinere von `pixel_width` und `pixel_height` gewählt wird.
     2. Um die Mitte auszurichten, werden die erforderlichen Offsets berechnet und in `padding_x` und `padding_y` gespeichert.
     3. Das Bild wird über `x` und `y` iteriert und das RGB-Pixel wird als Rechteck auf die Leinwand gezeichnet.
+
+
+---
 
 
 ## Gemeinsamer Teil
