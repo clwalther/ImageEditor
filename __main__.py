@@ -105,11 +105,11 @@ class PNGImage:
         return 0
 
     def convolve(self, image: list, sieve: list) -> list:
-        """This function performs the convolution operation between an image and a sieve.
+        """This function performs the convolution operation between an image and a filter/sieve.
 
             Args:
                 image (list): A 2D list representing the image to be convolved. Each element of the list should be a list containing the pixel values of a row in the image.
-                sieve (list): A 2D list representing the sieve to be used for the convolution. Each element of the list should be a list containing the sieve coefficients for a row in the sieve.
+                sieve (list): A 2D list representing the filter to be used for the convolution. Each element of the list should be a list containing the sieve coefficients for a row in the sieve.
 
             Returns:
                 list: A 2D list representing the convolved image. Each element of the list should be a list containing the convolved pixel values for a row in the image.
@@ -140,6 +140,10 @@ class PNGImage:
         return output_image
 
     def blur(self) -> int:
+        """This function applies a blurring effect to the image. It uses a convolution operation with a pre-defined blurring constant (BLURRING_CONSTANT) to convolve the image with a sieve of size BLURRING_CONSTANT.
+
+            Returns:
+                int: 0 if successfull."""
         BLURRING_CONSTANT = 5
 
         image = [[self.get_pixel(x, y) for x in range(self.width)] for y in range(self.height)] # 1D list -> 2D list
@@ -153,24 +157,31 @@ class PNGImage:
 
         return 0
 
-    def edge_enhancement(self):
+    def edge_detection(self) -> int:
+        """This method of the class Image that performs edge detection on the image by convolving the image with two different kernels (sieves) and merging the results. The first kernel (sieve_0) detects vertical changes in the image, while the second kernel (sieve_1) detects horizontal changes. After convolving the image with both kernels, the rectified results are merged using the Pythagorean theorem to find the final magnitude of the edge. The final result is stored back in the original Image object.
+
+            Returns:
+                int: Always returns 0."""
         image = [[self.get_pixel(x, y) for x in range(self.width)] for y in range(self.height)] # 1D list -> 2D list
-        sieve_0 = [[[-1/4]*3, [   0]*3, [+1/4]*3],
-                   [[-1/2]*3, [   0]*3, [+1/2]*3],
-                   [[-1/4]*3, [   0]*3, [+1/4]*3]]
+        sieve_0 = [[[-1/4]*3, [ +0 ]*3, [+1/4]*3],
+                   [[-1/2]*3, [ +0 ]*3, [+1/2]*3],
+                   [[-1/4]*3, [ +0 ]*3, [+1/4]*3]] # detects the vertical change
         sieve_1 = [[[-1/4]*3, [-1/2]*3, [-1/4]*3],
-                   [[   0]*3, [   0]*3, [   0]*3],
-                   [[+1/4]*3, [+1/2]*3, [+1/4]*3]]
+                   [[ +0 ]*3, [ +0 ]*3, [ +0 ]*3],
+                   [[+1/4]*3, [+1/2]*3, [+1/4]*3]] # detects the horizontal change
+
+        rectify = lambda array: [[[abs(array[y][x][i]) for i in range(len(array[0][0]))] for x in range(len(array[0]))] for y in range(len(array))]
+        merge   = lambda  a, b: [[[(a[y][x][i]**2 + b[y][x][i]**2)**0.5 for i in range(len(a[0][0]))] for x in range(len(a[0]))] for y in range(len(a))] # pythagoras
 
         convolved_image_0 = self.convolve(image, sieve_0)
         convolved_image_1 = self.convolve(image, sieve_1)
-        # convolved_image =
+        convolved_image_0 = rectify(convolved_image_0)
+        convolved_image_1 = rectify(convolved_image_1)
+        convolved_image   = merge(convolved_image_0, convolved_image_1)
 
-        print(convolved_image)
-
-        # for x in range(self.width):
-        #     for y in range(self.height):
-        #         self.set_pixel(x, y, convolved_image[y][x])
+        for x in range(self.width):
+            for y in range(self.height):
+                self.set_pixel(x, y, convolved_image[y][x])
 
         return 0
 
@@ -197,14 +208,14 @@ class PNGImage:
                 self.set_pixel(x, y, [r_wert, g_wert, b_wert])
 
     # ~ @lars
-    def mirror_horizontal(self) -> int:
+    def mirror_horizontal(self):
         flat_list = [[self.get_pixel(x, y) for x in range(self.width)] for y in range(self.height)]
 
         for x in range(self.width):
             for y in range(self.height):
                 self.set_pixel(x, y, flat_list[self.height - y - 1][x])
 
-    def mirror_vertical(self) -> int:
+    def mirror_vertical(self):
         flat_list = [[self.get_pixel(x, y) for y in range(self.height)] for x in range(self.width)]
 
         for x in range(self.width):
@@ -228,7 +239,7 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
         self.btn_grey.clicked.connect(self.greyscale)
         self.btn_invt.clicked.connect(self.invert)
         self.btn_blur.clicked.connect(self.blur)
-        self.btn_edge.clicked.connect(self.edge_enhancing)
+        self.btn_edge.clicked.connect(self.edge_detection)
         self.sld_brgh.valueChanged.connect(self.changed_brightness)
 
     def open_file(self) -> int:
@@ -321,19 +332,25 @@ class ImageEditorApplication(QtWidgets.QMainWindow):
         return -1
 
     def blur(self) -> int:
-        """"""
+        """Connection to image blurring.
+
+            Returns:
+                int: Result of calling the `blur` method of `PNGImage` or -1, if failed."""
         if self.image:
             blurred = self.image.blur()
             self.update()
             return blurred
         return -1
 
-    def edge_enhancing(self) -> int:
-        """"""
+    def edge_detection(self) -> int:
+        """Connection to image edge detection.
+
+            Returns:
+                int: Result of calling the `edge_detection` method of `PNGImage` or -1, if failed."""
         if self.image:
-            edge_enhanced = self.image.edge_enhancement()
+            edge_detected = self.image.edge_detection()
             self.update()
-            return edge_enhanced
+            return edge_detected
         return -1
 
     # ~ @mateo
