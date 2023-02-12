@@ -1,6 +1,5 @@
 from PyQt5 import uic, QtGui, QtCore, QtWidgets
 import sys
-import math
 
 class PNGImage:
     def __init__(self):
