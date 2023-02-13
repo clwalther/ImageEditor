@@ -70,7 +70,7 @@ class PNGImage:
             Raises:
                 ValueError: If the length of `value` is not 3 or if R, G, B are not integers between 0 and 255.
             """
-        if not (len(value) == 3 and all(0 <= v <= 255 for v in value)):
+        if not (len(value) == 3 or not all(0 <= v <= 255 for v in value)):
             raise ValueError
         self.pixeldata[y * self.width + x] = list(map(int, value))
 
