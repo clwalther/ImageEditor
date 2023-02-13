@@ -17,6 +17,10 @@ Das Folgende gilt für `python version 3.10.7` mit dem letzten stabilen Release 
         - `PNGImage`.blur()
         - `PNGImage`.edge_detection()
         - `ImageEditorApplication`.draw()
+    - @mateo
+        - `PNGImage`.greyscale()
+        - `PNGImage`.invert()
+        - `PNGImage`.brightness() 
     - @lars
         - `PNGImage`.mirror_horizontal()
         - `PNGImage`.mirror_vertical()
@@ -58,6 +62,27 @@ Die Funktion `blur` wendet einen Blurring-Effekt auf das Bild an. Dies wird durc
 
 ### `PNGImage`.edge_detection (@clwather)
 Die Methode `edge_detection` führt eine Kantenerkennung auf dem Bild durch, indem es das Bild mit zwei verschiedenen `Kernels` konvolviert und die Ergebnisse zusammenführt. Der erste Kernel (`sieve_0`) erkennt vertikale Änderungen im Bild, während der zweite Kernel (`sieve_1`) horizontale Änderungen erkennt. Nach dem Konvolvieren des Bildes mit beiden Kernels werden die rechteckierten Ergebnisse mithilfe des Pythagoras zum endgültigen Kantenmagnitude zusammengeführt. Das endgültige Ergebnis wird im ursprünglichen `Image-Objekt` gespeichert. Die Methode gibt immer `0` zurück, wenn sie erfolgreich war.
+
+
+---
+
+
+### `PNGImage`.greyscale (@mateo)
+Die Methode `greyscale` führt eine Grauskalierung durch, indem den drei RGB-Werten jedes Pixels mit einer bestimmten Zahl multipliziert wird. Jeder Rotwert (`pixel[0]`) wird mit `0,299` multipliziert. Jeder Grünwert (`pixel[1]`) wird mit `0,587` multipliziert. Jeder Blauwert (`pixel[2]`) eines Pixels wird mit `0,114` multipliziert.
+
+
+---
+
+
+### `PNGImage`.invert (@mateo)
+Die Methode `invert` führt eine Invertierung der Farbwerte durch, indem es bei jedem Pixel die einzelnen RGB-Werte (`pixel[0]`,`pixel[1]`,`pixel[2]`) von 255 subtrahiert, und dann den Betrag dieser Subtraktion benutzt.
+
+
+---
+
+
+### `PNGImage`.brightness (@mateo)
+Die Methode `brightness` führt eine Änderung der Helligkeit durch, indem es den vom Schieberegler (`sld_brgh`) ausgegeben Wert mit den einzelnen Farbwerten (`pixel[0]`,`pixel[1]`,`pixel[2]`) jedes Pixels multipliziert, mit der Begrenzung von `0-255`.
 
 
 ---
